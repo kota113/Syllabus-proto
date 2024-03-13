@@ -1,5 +1,3 @@
-# pip install google-colab-selenium
-
 import csv
 from datetime import datetime
 
@@ -89,7 +87,7 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
             staff_name_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[3]/dd"
             lang_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[5]/dd"
             style_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[7]/dd"
-            method_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[8]/dd"
+            method_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[4]/dd"
             giga_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[8]/dd"
 
         # 情報を抽出。このエラーハンドリングもっとうまく誰か書けよクソが
