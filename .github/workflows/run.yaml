@@ -12,10 +12,10 @@ jobs:
           python-version: '3.11'
           architecture: 'x64'
       - name: Scraping
-        working-directory: assets
+        working-directory: scripts
         run: |
           pip3 install -U get-chrome-driver
-          pip3 install -r requirements.txt
+          pip3 install -r ../scripts/requirements.txt
           python3 ../scripts/syllabusScraping.py
           python3 ../scripts/csvToJSON.py
       - name: Replace the result file
