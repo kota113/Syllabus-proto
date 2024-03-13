@@ -17,10 +17,16 @@ def setup_webdriver():
     return selenium_webdriver.Chrome(options=options)
 
 
+# calculate year and semester
+YEAR = str(datetime.now().year)
+# 春休みの始まり(2月)から春学期の終わり(7月)まではspring、それ以外はfall
+SEMESTER = "spring" if 2 <= datetime.now().month <= 7 else "fall"
+
+
 # Function to scrape and save data
 def scrape_and_save_data(driver, start_page=1, end_page=10):
     # ここのリンクは、シラバス検索で春学期の授業を検索したすべての検索結果
-    base_url = "https://syllabus.sfc.keio.ac.jp/courses?button=&locale=ja&page={}&search%5Bsemester%5D=spring&search%5Bsfc_guide_title%5D=&search%5Bsub_semester%5D=&search%5Bsummary%5D=&search%5Bteacher_name%5D=&search%5Btitle%5D=&search%5Byear%5D=2024"
+    base_url = f"https://syllabus.sfc.keio.ac.jp/courses?button=&locale=ja&page={{}}&search%5Bsemester%5D={SEMESTER}&search%5Bsfc_guide_title%5D=&search%5Bsub_semester%5D=&search%5Bsummary%5D=&search%5Bteacher_name%5D=&search%5Btitle%5D=&search%5Byear%5D={YEAR}"
     output_file = "syllabus_data.csv"
     link_list = []
 
@@ -123,10 +129,6 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
         except:
             lang = ""
 
-        # 年度と学期を算出
-        year = str(datetime.now().year)
-        semester = "春" if datetime.now().month <= 7 else "秋"
-
         try:
             is_giga = False if "非対象" in driver.find_element(By.XPATH, giga_xpath).text else True
         except:
@@ -172,7 +174,8 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
         # csvにほかん
         with open(output_file, mode='a', encoding='utf-8', newline='') as existing_file:
             writer = csv.writer(existing_file)
-            writer.writerow([course_id, subject_name, term, about, method, place, lang, year, semester,
+            semester_str = "春" if SEMESTER == "spring" else "秋"
+            writer.writerow([course_id, subject_name, term, about, method, place, lang, YEAR, semester_str,
                              is_giga, url, faculty, field, credit, day, period, staff_name, style])
 
         print(f"Scraping data complete for course ID: {course_id} ({i / total_courses * 100:.2f}% complete)")
