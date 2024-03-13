@@ -14,7 +14,7 @@ else
 fi
 
 cp output.json result.json
-cp output.json result-"$YEAR"-$SEMESTER.json
+cp output.json result-"$YEAR"$SEMESTER.json
 
 git add result.json
-git add result-"$YEAR"-$SEMESTER.json
+git add result-"$YEAR"$SEMESTER.json
