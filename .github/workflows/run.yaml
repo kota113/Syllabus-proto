@@ -22,3 +22,9 @@ jobs:
         working-directory: assets
         run: |
           bash ../scripts/replaceCurrentFile.sh
+      - name: Commit
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email ""
+          git commit -m "Update syllabus"
+          git push

@@ -32,7 +32,9 @@ if [ -f result-"$PREV_YEAR$PREV_SEMESTER".json ]; then
     echo "File already exists"
 else
     mv result.json result-"$PREV_YEAR$PREV_SEMESTER".json
+    git add result-"$PREV_YEAR$PREV_SEMESTER".json
 fi
 
 sleep 1
 mv output.json result.json
+git add result.json
