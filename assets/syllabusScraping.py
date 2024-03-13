@@ -1,6 +1,8 @@
 # pip install google-colab-selenium
 
 import csv
+from datetime import datetime
+
 from selenium import webdriver as selenium_webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -123,10 +125,9 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
         except:
             lang = ""
 
-        # ここら辺手抜きすぎるから、また直そうね
-
-        year = "2024"
-        semester = "春"
+        # 年度と学期を算出
+        year = str(datetime.now().year)
+        semester = "春" if datetime.now().month <= 7 else "秋"
 
         try:
             is_giga = False if "非対象" in driver.find_element(By.XPATH, giga_xpath).text else True
