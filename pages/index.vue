@@ -167,9 +167,6 @@ export default class Index extends Vue{
       if(raw_data["schedules"].length < 1)
         continue;
 
-      if(raw_data["year"] !== 2023)
-        continue;
-
       const schedules = raw_data["schedules"];
       for(const j in schedules){
         const orders = get_order(raw_data["schedules"][j]["day"], raw_data["schedules"][j]["period"])

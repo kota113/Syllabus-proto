@@ -5,7 +5,7 @@
       app
       hide-on-scroll
     >
-      <v-list-item-title>科目検索.死ぬ.com</v-list-item-title>
+      <v-list-item-title>科目検索（ハードフォーク）</v-list-item-title>
       <v-switch v-model="listView" label="リスト表示" class="switch-list" inset hide-details></v-switch>
     </v-app-bar>
     <v-main>
