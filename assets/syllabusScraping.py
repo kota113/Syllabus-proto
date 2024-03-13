@@ -1,5 +1,3 @@
-#pip install google-colab-selenium
-
 import csv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -86,7 +84,7 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
             staff_name_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[3]/dd"
             lang_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[5]/dd"
             style_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[7]/dd"
-            method_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[8]/dd"
+            method_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[4]/dd"
             giga_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[8]/dd"
 
         #情報を抽出。このエラーハンドリングもっとうまく誰か書けよクソが
@@ -121,8 +119,8 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
             lang = driver.find_element(By.XPATH, lang_xpath).text
         except:
             lang = ""
-          
-        
+
+
         #ここら辺手抜きすぎるから、また直そうね
 
         year = "2024"
