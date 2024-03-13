@@ -6,35 +6,15 @@ YEAR=$(date +%Y)
 # Get the current month
 MONTH=$(date +%m)
 
-# Check the semester
+# Calculate the semester
 if [ "$MONTH" -ge 2 ] && [ "$MONTH" -le 7 ]; then
     SEMESTER="s"
 else
     SEMESTER="f"
 fi
 
-# get the previous semester
-if [ "$SEMESTER" == "s" ]; then
-    PREV_SEMESTER="f"
-else
-    PREV_SEMESTER="s"
-fi
+cp output.json result.json
+cp output.json result-"$YEAR"-$SEMESTER.json
 
-# get the previous year
-if [ "$SEMESTER" == "s" ]; then
-    PREV_YEAR=$((YEAR - 1))
-else
-    PREV_YEAR=$YEAR
-fi
-
-# ignore if there is already a previous file
-if [ -f result-"$PREV_YEAR$PREV_SEMESTER".json ]; then
-    echo "File already exists"
-else
-    mv result.json result-"$PREV_YEAR$PREV_SEMESTER".json
-    git add result-"$PREV_YEAR$PREV_SEMESTER".json
-fi
-
-sleep 1
-mv output.json result.json
 git add result.json
+git add result-"$YEAR"-$SEMESTER.json
