@@ -12,7 +12,7 @@ jobs:
           python-version: '3.11'
           architecture: 'x64'
       - name: Scraping
-        working-directory: scripts
+        working-directory: assets
         run: |
           pip3 install -r ../scripts/requirements.txt
           python3 ../scripts/syllabusScraping.py
