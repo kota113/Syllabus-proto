@@ -96,7 +96,7 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
             method_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[4]/dd"
             giga_xpath = "/html/body/div[2]/div/div[1]/div[2]/dl[8]/dd"
 
-        # 情報を抽出。このエラーハンドリングもっとうまく誰か書けよクソが
+        # 情報を抽出
         try:
             subject_name = driver.find_element(By.XPATH, "/html/body/div[2]/div/div[1]/div[1]/div/dl[2]/dd[2]").text
         except:
@@ -171,7 +171,7 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
         except:
             style = ""
 
-        # csvにほかん
+        # csvに出力
         with open(output_file, mode='a', encoding='utf-8', newline='') as existing_file:
             writer = csv.writer(existing_file)
             semester_str = "春" if SEMESTER == "spring" else "秋"
