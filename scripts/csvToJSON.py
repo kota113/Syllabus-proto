@@ -2,19 +2,23 @@ import csv
 import json
 import re
 
+
 def extract_day(value):
     day_match = re.search(r'([月火水木金土日])', value)
     return day_match.group() if day_match else None
 
+
 def extract_numeric(value):
     numeric_part = re.search(r'\d+', value)
     return int(numeric_part.group()) if numeric_part else None
+
 
 def convert_csv_to_json(csv_file_path, output_json_path):
     json_data = []
 
     with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
+        row: dict
         for row in reader:
             # Split styles with commas
             styles = [{"style": style.strip()} for style in row['style'].split(',')]
@@ -85,5 +89,6 @@ def convert_csv_to_json(csv_file_path, output_json_path):
 
     print(f"Conversion completed. JSON data saved to {output_json_path}")
 
+
 # Replace 'your_csv_file.csv' and 'output.json' with your actual file paths
-convert_csv_to_json('/content/syllabus_data.csv', 'output.json')
+convert_csv_to_json('syllabus_data.csv', 'output.json')
