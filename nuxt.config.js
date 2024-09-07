@@ -15,10 +15,18 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
+      { property: 'og:title', content: 'SFCシラバス検索' },
+      { property: 'og:description', content: 'get some credits at least' },
+      { property: 'og:image', content: 'https://kota-yata.github.io/Syllabus-proto/ogp.png' },
+      { property: 'og:url', content: 'https://kota-yata.github.io/Syllabus-proto/' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'SFCシラバス検索' },
+      { name: 'twitter:description', content: 'get some credits at least' },
+      { name: 'twitter:image', content: 'https://kota-yata.github.io/Syllabus-proto/ogp.png' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/webp', href: '/sql.webp' }
     ]
   },
 
