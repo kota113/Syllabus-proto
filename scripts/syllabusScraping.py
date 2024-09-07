@@ -1,12 +1,11 @@
 import csv
 import time
-from datetime import datetime
 
 from selenium import webdriver as selenium_webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
-from scripts.utils import getSemester, getYear
+from utils import get_semester, get_year
 
 
 # google colab用のセットアップ
@@ -19,8 +18,8 @@ def setup_webdriver():
 
     return selenium_webdriver.Chrome(options=options)
 
-YEAR = getYear()
-SEMESTER = getSemester()
+YEAR = get_year()
+SEMESTER = get_semester()
 
 
 # Function to scrape and save data

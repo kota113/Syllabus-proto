@@ -2,6 +2,10 @@ import csv
 import json
 import re
 
+from utils import get_semester, get_year
+
+YEAR = get_year()
+SEMESTER = "s" if get_semester() == "spring" else "f"
 
 def extract_day(value):
     day_match = re.search(r'([月火水木金土日])', value)
@@ -91,4 +95,4 @@ def convert_csv_to_json(csv_file_path, output_json_path):
 
 
 # Replace 'your_csv_file.csv' and 'output.json' with your actual file paths
-convert_csv_to_json('syllabus_data.csv', f"../assets/result-")
+convert_csv_to_json('syllabus_data.csv', f"../assets/result-{YEAR}{SEMESTER}.json")

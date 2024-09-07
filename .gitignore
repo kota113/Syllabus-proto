@@ -88,3 +88,11 @@ sw.*
 
 # Vim swap files
 *.swp
+
+scripts/*.json
+scripts/*.csv
+
+**/package-lock.json
+
+.venv
+**/__pycache__

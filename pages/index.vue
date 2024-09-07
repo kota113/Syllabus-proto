@@ -137,13 +137,15 @@ export default class Index extends Vue{
     Giga.N_GIGA
   ]
 
+  number_of_periods: number = 7;
+
   days: string[] = ["月", "火", "水", "木", "金"]
   dayDict: {[key: string]: number} = {
     "月": 0,
     "火": 1,
     "水": 2,
     "木": 3,
-    "金": 4
+    "金": 4,
   }
   tab = this.days[0];
 
@@ -205,9 +207,9 @@ export default class Index extends Vue{
 
   showSyllabuses(syllabuses: Subject[]){
     this.showingSyllabuses = []
-    for(let i = 0; i < 7; i++){
+    for(let i = 0; i < this.number_of_periods; i++){
       this.showingSyllabuses.push([])
-      for(let j = 0; j < 5; j++){
+      for(let j = 0; j < this.days.length; j++){
         this.showingSyllabuses[i].push({subjects: []})
       }
     }
