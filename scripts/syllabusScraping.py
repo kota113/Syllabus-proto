@@ -1,9 +1,12 @@
 import csv
+import time
 from datetime import datetime
 
 from selenium import webdriver as selenium_webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+
+from scripts.utils import getSemester, getYear
 
 
 # google colab用のセットアップ
@@ -16,11 +19,8 @@ def setup_webdriver():
 
     return selenium_webdriver.Chrome(options=options)
 
-
-# calculate year and semester
-YEAR = str(datetime.now().year)
-# 春休みの始まり(2月)から春学期の終わり(7月)まではspring、それ以外はfall
-SEMESTER = "spring" if 2 <= datetime.now().month <= 7 else "fall"
+YEAR = getYear()
+SEMESTER = getSemester()
 
 
 # Function to scrape and save data
@@ -72,6 +72,7 @@ def scrape_and_save_data(driver, start_page=1, end_page=10):
 
         course_url = f"https://syllabus.sfc.keio.ac.jp/courses/2024_{course_id}?locale=ja"
 
+        time.sleep(1)
         driver.get(course_url)
 
         # 研究会と授業で2パターンあるので、分野が研究プロジェクト科目かどうかで判断する

@@ -91,4 +91,4 @@ def convert_csv_to_json(csv_file_path, output_json_path):
 
 
 # Replace 'your_csv_file.csv' and 'output.json' with your actual file paths
-convert_csv_to_json('syllabus_data.csv', 'output.json')
+convert_csv_to_json('syllabus_data.csv', f"../assets/result-")
