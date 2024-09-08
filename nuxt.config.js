@@ -6,15 +6,14 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - syllabussearch-die-proto',
-    title: 'syllabussearch-die-proto',
+    title: 'SFCシラバス検索',
     htmlAttrs: {
       lang: 'en'
     },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
+      { hid: 'description', name: 'description', content: 'get some credits at least' },
       { name: 'format-detection', content: 'telephone=no' },
       { property: 'og:title', content: 'SFCシラバス検索' },
       { property: 'og:description', content: 'get some credits at least' },
@@ -22,11 +21,12 @@ export default {
       { property: 'og:url', content: 'https://kota-yata.github.io/Syllabus-proto/' },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: 'SFCシラバス検索' },
+      { name: 'twitter:site', content: '@kota_yata' },
       { name: 'twitter:description', content: 'get some credits at least' },
-      { name: 'twitter:image', content: 'https://kota-yata.github.io/Syllabus-proto/ogp.png' }
+      // { name: 'twitter:image', content: 'https://kota-yata.github.io/Syllabus-proto/ogp.png' }
     ],
     link: [
-      { rel: 'icon', type: 'image/webp', href: '/sql.webp' }
+      { rel: 'icon', href: '/sql.webp' }
     ]
   },
 
