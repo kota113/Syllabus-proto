@@ -5,7 +5,7 @@
       app
       hide-on-scroll
     >
-      <v-list-item-title>科目検索（ハードフォーク）</v-list-item-title>
+      <v-list-item-title>SFCシラバス検索</v-list-item-title>
       <v-switch v-model="listView" label="リスト表示" class="switch-list" inset hide-details></v-switch>
     </v-app-bar>
     <v-main>
@@ -13,6 +13,11 @@
         <Nuxt />
       </v-container>
     </v-main>
+    <v-app-bar>
+      <v-spacer></v-spacer>
+      <v-toolbar-title><a href="https://github.com/kota-yata/Syllabus-proto">GitHub</a></v-toolbar-title>
+      <v-spacer></v-spacer>
+    </v-app-bar>
 <!--    <v-navigation-drawer-->
 <!--      v-model="rightDrawer"-->
 <!--      temporary-->
