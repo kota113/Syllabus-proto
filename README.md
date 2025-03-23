@@ -5,4 +5,3 @@ Fork元は[NV7150/Syllabus-proto](https://github.com/NV7150/Syllabus-proto)
 - Nuxtのバージョンアップ
 - リスト表示の追加
 - スクレイピングのスクリプト追加
-- 2024年春のシラバスに対応
