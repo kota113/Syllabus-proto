@@ -27,21 +27,43 @@
           v-for="day in days"
           :key="day"
         >
-          <v-row v-for="(row, i) in showingSyllabuses" class="row-filled">
-            <v-col cols="12">
-              <v-card>
-                <v-container>
-                  <v-row>
-                    <v-col class="text-day-period my-3">{{order2str(i, dayDict[day])}}</v-col>
-                  </v-row>
-                  <div v-for="(col, t) in row[dayDict[day]].subjects" :key="t">
-                    <SyllabusCard class="ma-2" :syllabus="col" v-show="!listView"/>
-                    <li class="li-subject py-1" @click="showModal(col)" v-show="listView">{{ col.subject_name }}</li>
-                  </div>
-                </v-container>
-              </v-card>
-            </v-col>
-          </v-row>
+          <!-- 普通の曜日は時限ごとに表示 -->
+          <template v-if="day !== 'その他'">
+            <v-row v-for="(row, i) in showingSyllabuses" class="row-filled" :key="'row-' + i + '-' + day">
+              <v-col cols="12">
+                <v-card>
+                  <v-container>
+                    <v-row>
+                      <v-col class="text-day-period my-3">{{order2str(i, dayDict[day])}}</v-col>
+                    </v-row>
+                    <div v-for="(col, t) in row[dayDict[day]].subjects" :key="t">
+                      <SyllabusCard class="ma-2" :syllabus="col" v-show="!listView"/>
+                      <li class="li-subject py-1" @click="showModal(col)" v-show="listView">{{ col.subject_name }}</li>
+                    </div>
+                  </v-container>
+                </v-card>
+              </v-col>
+            </v-row>
+          </template>
+
+          <!-- その他は全時限をまとめて表示（サイドに連続表示） -->
+          <template v-else>
+            <v-row class="row-filled">
+              <v-col cols="12">
+                <v-card>
+                  <v-container>
+                    <v-row>
+                      <v-col class="text-day-period my-3">その他</v-col>
+                    </v-row>
+                    <div v-for="(col, t) in othersFlat" :key="'others-' + t">
+                      <SyllabusCard class="ma-2" :syllabus="col" v-show="!listView"/>
+                      <li class="li-subject py-1" @click="showModal(col)" v-show="listView">{{ col.subject_name }}</li>
+                    </div>
+                  </v-container>
+                </v-card>
+              </v-col>
+            </v-row>
+          </template>
         </v-tab-item>
       </v-tabs-items>
 
@@ -139,13 +161,14 @@ export default class Index extends Vue{
 
   number_of_periods: number = 7;
 
-  days: string[] = ["月", "火", "水", "木", "金"]
+  days: string[] = ["月", "火", "水", "木", "金", "その他"]
   dayDict: {[key: string]: number} = {
     "月": 0,
     "火": 1,
     "水": 2,
     "木": 3,
     "金": 4,
+    "その他": 5,
   }
   tab = this.days[0];
 
@@ -155,6 +178,21 @@ export default class Index extends Vue{
     return this.$store.state.listView;
   }
 
+  get othersFlat(){
+    const result: Subject[] = [];
+    if(!this.showingSyllabuses) return result;
+    const idx = this.dayDict["その他"];
+    for(let p = 0; p < this.number_of_periods; p++){
+      const row = this.showingSyllabuses[p];
+      if(!row || !row[idx]) continue;
+      const bucket = row[idx];
+      if(bucket && Array.isArray(bucket.subjects)){
+        result.push(...bucket.subjects);
+      }
+    }
+    return result;
+  }
+
   controlMenu(newVal:boolean){
     this.showMenu = newVal;
   }
@@ -162,46 +200,184 @@ export default class Index extends Vue{
   created(){
     this.syllabuses = []
 
-    const file_raw = require("~/assets/result.json")
-    for(const i in file_raw){
-      const raw_data = file_raw[i]
-
-      if(raw_data["schedules"].length < 1)
-        continue;
-
-      const schedules = raw_data["schedules"];
-      for(const j in schedules){
-        const orders = get_order(raw_data["schedules"][j]["day"], raw_data["schedules"][j]["period"])
-
-        if(orders[0] === -1 || orders[0] === -1){
-          continue
-        }
-
-        if(raw_data["fields"][0]["faculty"] !== "総合政策・環境情報学部")
-          continue
-
-        const staffs = []
-        for(const j in raw_data["staffs"]){
-          staffs.push(raw_data["staffs"][j]["staff_name"])
-        }
-
-        const data: Subject = {
-          subject_name: raw_data["subject_name"],
-          term: raw_data["term"],
-          url: raw_data["url"],
-          field: raw_data["fields"][0]["field"],
-          credit: raw_data["fields"][0]["credit"],
-          place: raw_data["place"],
-          is_giga: raw_data["is_giga"],
-          method: raw_data["method"],
-          staff: staffs,
-          lang: raw_data["lang"],
-          day: raw_data["schedules"][j]["day"],
-          period: Number(raw_data["schedules"][j]["period"])
-        }
-        this.syllabuses.push(data)
+    // Try new 2025f JSON format first; fallback to legacy format
+    const tryLoad2025f = () => {
+      try{
+        const monday = require("~/assets/2025f/result-2025f-monday.json");
+        const tuesday = require("~/assets/2025f/result-2025f-tuesday.json");
+        const wednesday = require("~/assets/2025f/result-2025f-wednesday.json");
+        const thursday = require("~/assets/2025f/result-2025f-thursday.json");
+        const friday = require("~/assets/2025f/result-2025f-friday.json");
+        const saturday = require("~/assets/2025f/result-2025f-saturday.json");
+        const others = require("~/assets/2025f/result-2025f-others.json");
+        return { monday, tuesday, wednesday, thursday, friday, saturday, others };
+      }catch(e){
+        return null;
       }
     }
+
+    const mapMethod = (src: string): string => {
+      if(!src) return Method.OFF_LINE;
+      if(src.indexOf("オンデマンド") >= 0) return Method.ON_DEMAND;
+      if(src.indexOf("オンライン") >= 0) return Method.LIVE;
+      if(src.indexOf("対面") >= 0) return Method.OFF_LINE;
+      return Method.OFF_LINE;
+    }
+
+    const extractField = (fld: string): string => {
+      if(!fld) return "others";
+      const candidates = [
+        Fields.GENERAL,
+        Fields.LANG_COM,
+        Fields.SHARED,
+        Fields.DS1,
+        Fields.DS2,
+        Fields.IT_BASE,
+        Fields.WELLNESS,
+        Fields.POLICY_MAN,
+        Fields.INFO_ENV,
+        Fields.RESEARCH
+      ];
+      for(const key of candidates){
+        if(fld.indexOf(key) >= 0) return key;
+      }
+      return "others";
+    }
+
+    const parseDowpd = (dowpd: string): {day: string, period: number}[] => {
+      const result: {day: string, period: number}[] = [];
+      if(!dowpd) return result;
+      // Example: "月1,2/水1,2" or "月1" or "月1/火2/水1"
+      const parts = dowpd.split("/");
+      parts.forEach(p => {
+        const trimmed = p.trim();
+        if(trimmed.length === 0) return;
+        const day = trimmed.charAt(0); // 月 火 水 木 金 土 ほか
+        const periodsStr = trimmed.slice(1);
+        if(periodsStr.length === 0) return;
+        const nums = periodsStr.split(",").map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+        nums.forEach(n => result.push({day, period: n}));
+      })
+      return result;
+    }
+
+    const packs = tryLoad2025f();
+    if(packs){
+      const pushSubject = (rec: any, isOthers: boolean) => {
+        const name = rec["SBJTNM"] || rec["SBJTNM_KN"] || "";
+        const method = mapMethod(rec["KNLESSONMODENM"] || "");
+        const field = extractField(rec["FLDNM"] || "");
+        const isGiga = typeof rec["SBJTNM"] === 'string' && rec["SBJTNM"].indexOf("GIGA") >= 0;
+        const lang = rec["KNLESSONLANGNM"] || "";
+        const place = rec["AREANM"] || "";
+        const credit = parseInt(rec["CREDIT"], 10) || 0;
+        const entno = (rec["JSON_ROW_KEY"] && rec["JSON_ROW_KEY"]["ENTNO"]) || rec["ENTNO"] || "";
+        const year = (rec["JSON_ROW_KEY"] && rec["JSON_ROW_KEY"]["TTBLYR"]) || rec["TTBLYR"] || 2025;
+        const url = (year && entno) ? `https://gslbs.keio.jp/syllabus/detail?ttblyr=${year}&entno=${entno}` : "";
+
+        const staffRaw: string = rec["LCTNM"] || "";
+        const staff = staffRaw ? [staffRaw] : [];
+
+        let slots = parseDowpd(rec["DOWPD"] || "");
+        if(slots.length === 0){
+          // fallback to single day/period codes
+          const dayMap: {[k: string]: string} = {"1":"月","2":"火","3":"水","4":"木","5":"金","6":"土","9":"その他"};
+          const day = dayMap[rec["DOWCD"]] || "";
+          const pd = parseInt(rec["PDCD"], 10);
+          if(day && !isNaN(pd)) slots = [{day, period: pd}];
+        }
+
+        // default all to 通期 to keep existing term filter working
+        const term = "通期";
+
+        if(slots.length === 0 && isOthers){
+          slots = [{day: "その他", period: 1}];
+        }
+
+        slots.forEach(sp => {
+          const orders = get_order(sp.day, sp.period);
+          if(orders[0] === -1 || orders[1] === -1) return; // skip unsupported days
+          const data: Subject = {
+            subject_name: name,
+            term,
+            url,
+            field,
+            credit,
+            place,
+            is_giga: isGiga,
+            method,
+            staff,
+            lang,
+            day: sp.day,
+            period: sp.period
+          };
+          this.syllabuses.push(data);
+        });
+      }
+
+      const entries: [string, any][] = [
+        ["monday", packs.monday],
+        ["tuesday", packs.tuesday],
+        ["wednesday", packs.wednesday],
+        ["thursday", packs.thursday],
+        ["friday", packs.friday],
+        ["saturday", packs.saturday],
+        ["others", packs.others],
+      ];
+      for(const [key, pack] of entries){
+        if(!pack || !pack.searchResultDs) continue;
+        const isOthers = key === "others";
+        for(const group of pack.searchResultDs){
+          if(!group || !group.sbjtDs) continue;
+          for(const rec of group.sbjtDs){
+            pushSubject(rec, isOthers);
+          }
+        }
+      }
+    } else {
+      // Legacy format fallback
+      const file_raw = require("~/assets/result.json")
+      for(const i in file_raw){
+        const raw_data = file_raw[i]
+
+        if(raw_data["schedules"].length < 1)
+          continue;
+
+        const schedules = raw_data["schedules"];
+        for(const j in schedules){
+          const orders = get_order(raw_data["schedules"][j]["day"], raw_data["schedules"][j]["period"])
+
+          if(orders[0] === -1 || orders[0] === -1){
+            continue
+          }
+
+          if(raw_data["fields"][0]["faculty"] !== "総合政策・環境情報学部")
+            continue
+
+          const staffs = []
+          for(const j in raw_data["staffs"]){
+            staffs.push(raw_data["staffs"][j]["staff_name"])
+          }
+
+          const data: Subject = {
+            subject_name: raw_data["subject_name"],
+            term: raw_data["term"],
+            url: raw_data["url"],
+            field: raw_data["fields"][0]["field"],
+            credit: raw_data["fields"][0]["credit"],
+            place: raw_data["place"],
+            is_giga: raw_data["is_giga"],
+            method: raw_data["method"],
+            staff: staffs,
+            lang: raw_data["lang"],
+            day: raw_data["schedules"][j]["day"],
+            period: Number(raw_data["schedules"][j]["period"])
+          }
+          this.syllabuses.push(data)
+        }
+      }
+    }
+
     this.processAvailable();
   }
 
@@ -219,6 +395,9 @@ export default class Index extends Vue{
       const orders = get_order(syllabus.day, syllabus.period);
 
       if(orders[0] == -1 || orders[1] == -1)
+        continue;
+
+      if(orders[1] < 0 || orders[1] >= this.number_of_periods)
         continue;
 
       this.showingSyllabuses[orders[1]][orders[0]].subjects.push(syllabus);

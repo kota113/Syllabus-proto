@@ -9,18 +9,18 @@
           {{teachers}}
         </v-col>
       </v-row>
-      <v-row>
-        <v-col xl="2" lg="4">
-          <v-img max-height="30px" max-width="30px" :src="fieldImg" />
+      <v-row class="icon-row pt-2" no-gutters>
+        <v-col xl="2" lg="4n">
+          <v-img width="24" height="24" :src="fieldImg" />
         </v-col>
         <v-col xl="2" lg="4n">
-          <v-img max-width="30px" max-height="30px" :src="methodImg" />
+          <v-img width="24" height="24" :src="methodImg" />
         </v-col>
-        <v-col xl="2" lg="4" v-if="syllabus.term !== '通期'">
-          <v-img max-width="30px" max-height="30px" :src="termImg" />
+        <v-col xl="2" lg="4n" v-if="syllabus.term !== '通期'">
+          <v-img width="24" height="24" :src="termImg" />
         </v-col>
-        <v-col xl="2" lg="4" v-if="syllabus.is_giga">
-          <v-img max-width="30px" max-height="30px" :src="gigaImg" />
+        <v-col xl="2" lg="4n" v-if="syllabus.is_giga">
+          <v-img width="24" height="24" :src="gigaImg" />
         </v-col>
       </v-row>
     </v-container>
@@ -80,4 +80,9 @@ export default class SyllabusCard extends Vue{
 .little_text{
   font-size: 0.5em;
 }
+
+.icon-row {
+  align-items: center;
+}
+
 </style>

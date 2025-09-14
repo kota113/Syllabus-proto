@@ -7,13 +7,15 @@ export function get_order(day:string, period: number){
     case "水": ord_1 = 2; break;
     case "木": ord_1 = 3; break;
     case "金": ord_1 = 4; break;
+    case "土": ord_1 = 5; break; // 土曜は「その他」と同一列に集約
+    case "その他": ord_1 = 5; break;
   }
   return [ord_1, period - 1]
 }
 
-const dayOrders = ["月","火","水","木","金"]
+const dayOrders = ["月","火","水","木","金","その他"]
 export function parseOrder(ord1: number, ord2: number){
-  if(0 > ord1 || ord1 > 4){
+  if(0 > ord1 || ord1 > 5){
     return "?"
   }
   const day = dayOrders[ord1];
